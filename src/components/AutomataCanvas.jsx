@@ -1,19 +1,39 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { ReactFlow, 
         ReactFlowProvider, 
         Background, 
         BackgroundVariant,
+        applyNodeChanges, 
+        applyEdgeChanges, 
+        addEdge,
         Panel } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
 import "../styles/AutomataCanvas.css";
 
+const initialNodes = [];
+const initialEdges = [];
 
 
 function AutomataCanvasGraph(){
+    
+    const [nodes, setNodes] = useState(initialNodes);
+    const [edges, setEdges] = useState(initialEdges);
+ 
+    const onNodesChange = useCallback((changes) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),[],);
+    const onEdgesChange = useCallback((changes) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),[],);
+    const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),[],);
+    
+    
     return(
         <div className="canvas-graph">
-            <ReactFlow>
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                fitView>
             <Background color="#a8a49c" variant={BackgroundVariant.Dots} />
 
             <Panel position="top-left">
