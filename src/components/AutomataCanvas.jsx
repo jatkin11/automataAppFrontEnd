@@ -3,8 +3,8 @@ import { ReactFlow,
         ReactFlowProvider, 
         Background, 
         BackgroundVariant,
-        applyNodeChanges, 
-        applyEdgeChanges, 
+        useNodesState,
+        useEdgesState, 
         addEdge,
         Panel } from '@xyflow/react';
 
@@ -17,14 +17,35 @@ const initialEdges = [];
 
 function AutomataCanvasGraph(){
     
-    const [nodes, setNodes] = useState(initialNodes);
-    const [edges, setEdges] = useState(initialEdges);
+    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
  
-    const onNodesChange = useCallback((changes) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),[],);
-    const onEdgesChange = useCallback((changes) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),[],);
     const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),[],);
     
-    
+    const addNode = useCallback(()=> {
+        
+        setNodes((r)=> {
+
+            const newNode = {
+                id: "q0",
+                type: "automata",
+                position: {
+                x: 100,
+                y: 100,
+                },
+                data: {
+                label: "q0",
+                start: true,
+                accepting: false,
+                },
+            }
+            return [...r,newNode];
+        });
+
+        }, [setNodes]
+
+    );
+
     return(
         <div className="canvas-graph">
             <ReactFlow
@@ -46,7 +67,7 @@ function AutomataCanvasGraph(){
                 <div className="tool-panel">
                     <button>Regex → NFA</button>
                     <button>NFA → DFA</button>
-                    <button>Add node</button>
+                    <button onClick={addNode}>Add node</button>
                     <button>Minimise DFA</button>
                     <button>Accepting State</button>
                     <button>Start State</button>
