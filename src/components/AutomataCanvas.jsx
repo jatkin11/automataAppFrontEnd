@@ -100,7 +100,6 @@ function AutomataCanvasGraph(){
                     <button>NFA → DFA</button>
                     <button onClick={addNode}>Add Node</button>
                     <button>Minimise DFA</button>
-                    <button>Accepting State</button>
                     <button>Delete Tool</button>
                 </div>
             </Panel>
