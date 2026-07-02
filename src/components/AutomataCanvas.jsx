@@ -66,9 +66,12 @@ function AutomataCanvasGraph(){
 
             <Panel position="bottom-left">
                 <div className="tool-panel">
+                    <input type="text"
+                    placeholder="Enter Regex here"
+                    className="regex-input"/>
                     <button>Regex → NFA</button>
                     <button>NFA → DFA</button>
-                    <button onClick={addNode}>Add node</button>
+                    <button onClick={addNode}>Add Node</button>
                     <button>Minimise DFA</button>
                     <button>Accepting State</button>
                     <button>Start State</button>
