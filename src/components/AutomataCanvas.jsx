@@ -23,13 +23,24 @@ function AutomataCanvasGraph(){
  
     const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),[],);
     
+    const setStartState = useCallback((event,node)=>{
+        setNodes((r)=> 
+            r.map((e) => ({
+                ...e,
+                data: {
+                    ...e.data,
+                    start: e.id === node.id,
+                },
+            })))},[setNodes])
+
+
     const addNode = useCallback(()=> {
         
         setNodes((r)=> {
             const nodeId = nextId(r);
             const newNode = {
                 id: nodeId,
-                type: "automata",
+                type: "default",
                 position: {
                 x: 100 + r.length * 200,
                 y: 100,
@@ -54,6 +65,7 @@ function AutomataCanvasGraph(){
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
+                onNodeDoubleClick={setStartState}
                 onConnect={onConnect}
                 fitView>
             <Background color="#a8a49c" variant={BackgroundVariant.Dots} />
@@ -78,7 +90,7 @@ function AutomataCanvasGraph(){
                     <button>Delete Tool</button>
                 </div>
             </Panel>
-
+            
             </ReactFlow>
         </div>
     );
