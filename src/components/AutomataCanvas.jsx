@@ -10,6 +10,7 @@ import { ReactFlow,
 
 import '@xyflow/react/dist/style.css';
 import "../styles/AutomataCanvas.css";
+import { nextId } from './GlobalNodeIdGenerator';
 
 const initialNodes = [];
 const initialEdges = [];
@@ -25,16 +26,16 @@ function AutomataCanvasGraph(){
     const addNode = useCallback(()=> {
         
         setNodes((r)=> {
-
+            const nodeId = nextId(r);
             const newNode = {
-                id: "q0",
+                id: nodeId,
                 type: "automata",
                 position: {
-                x: 100,
+                x: 100 + r.length * 200,
                 y: 100,
                 },
                 data: {
-                label: "q0",
+                label: nodeId,
                 start: true,
                 accepting: false,
                 },
