@@ -31,8 +31,22 @@ function AutomataCanvasGraph(){
                     ...e.data,
                     start: e.id === node.id,
                 },
-            })))},[setNodes])
+            })))},[setNodes]);
 
+
+    const setAcceptingState = useCallback((event,node)=>{
+        setNodes((r)=> 
+            r.map((e) => {
+                if(e.id !== node.id){
+                    return e;
+                }
+                return{
+                    ...e,
+                    data: {
+                        ...e.data,
+                        start: !e.data.accepting,
+                    }}
+            }))},[setNodes])
 
     const addNode = useCallback(()=> {
         
@@ -66,6 +80,7 @@ function AutomataCanvasGraph(){
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onNodeDoubleClick={setStartState}
+                onNodeContextMenu={setAcceptingState}
                 onConnect={onConnect}
                 fitView>
             <Background color="#a8a49c" variant={BackgroundVariant.Dots} />
