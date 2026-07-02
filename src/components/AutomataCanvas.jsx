@@ -86,11 +86,10 @@ function AutomataCanvasGraph(){
                     <button onClick={addNode}>Add Node</button>
                     <button>Minimise DFA</button>
                     <button>Accepting State</button>
-                    <button>Start State</button>
                     <button>Delete Tool</button>
                 </div>
             </Panel>
-            
+
             </ReactFlow>
         </div>
     );
