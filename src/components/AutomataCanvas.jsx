@@ -35,6 +35,7 @@ function AutomataCanvasGraph(){
 
 
     const setAcceptingState = useCallback((event,node)=>{
+        event.preventDefault();
         setNodes((r)=> 
             r.map((e) => {
                 if(e.id !== node.id){
