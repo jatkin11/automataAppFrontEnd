@@ -12,7 +12,7 @@ import '@xyflow/react/dist/style.css';
 import "../styles/AutomataCanvas.css";
 import { nextId } from './GlobalNodeIdGenerator';
 import { apiConvertToDFA, apiRegexToNFA } from '../api/automataApi';
-import CustomNode from './CustomNode';
+import  CustomNode  from './CustomNode.jsx';
 
 const initialNodes = [];
 const initialEdges = [];
