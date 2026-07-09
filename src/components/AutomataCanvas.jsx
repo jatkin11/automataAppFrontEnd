@@ -52,12 +52,12 @@ function AutomataCanvasGraph(){
         applyBackendGraph(convertedGraph);
     }, [nodes,edges,applyBackendGraph]);
 
-
+    //NEED TO ADD REGEX STRING VALIDATION, COULD POSSIBLY DO IT IN BACK END
     const convertToNFA = useCallback (async () => {
 
-        const convertedGraph = await apiRegexToNFA("ab*cd*ef*")
+        const convertedGraph = await apiRegexToNFA(transitionSymbols)
         applyBackendGraph(convertedGraph);
-    }, [applyBackendGraph]);
+    }, [transitionSymbols,applyBackendGraph]);
 
 
     const setAcceptingState = useCallback((event,node)=>{
@@ -121,6 +121,7 @@ function AutomataCanvasGraph(){
             <Panel position="bottom-left">
                 <div className="tool-panel">
                     <input type="text"
+                    onChange={e => setTransitionSymbols(e.target.value)}
                     placeholder="Enter Regex here"
                     className="regex-input"/>
                     <button onClick={convertToNFA}>Regex → NFA</button>
