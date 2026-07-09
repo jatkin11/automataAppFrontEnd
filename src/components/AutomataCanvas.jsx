@@ -11,6 +11,7 @@ import { ReactFlow,
 import '@xyflow/react/dist/style.css';
 import "../styles/AutomataCanvas.css";
 import { nextId } from './GlobalNodeIdGenerator';
+import { apiConvertToDFA } from '../api/automataApi';
 
 const initialNodes = [];
 const initialEdges = [];
@@ -18,10 +19,11 @@ const initialEdges = [];
 
 function AutomataCanvasGraph(){
     
+    const [transitionSymbols, setTransitionsSymbols] = useState(""); //need to use this to get the symbol from user input to add to the edge labels to pass to the back end
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
  
-    const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),[],);
+    const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge({...params,label:"a",}, edgesSnapshot)),[],);
     
     const setStartState = useCallback((event,node)=>{
         setNodes((r)=> 
@@ -29,9 +31,26 @@ function AutomataCanvasGraph(){
                 ...e,
                 data: {
                     ...e.data,
-                    start: e.id === node.id,
+                    startingState: e.id === node.id,
                 },
             })))},[setNodes]);
+
+
+    const applyBackendGraph = useCallback((graph) => {
+      setNodes(graph.nodes);
+      setEdges(graph.edges);
+    },
+    [setNodes, setEdges]
+    );
+
+    const convertToDFA = useCallback (async () => {
+        const currentGraph = {
+            nodes,
+            edges,
+        };
+        const convertedGraph = await apiConvertToDFA(currentGraph)
+        applyBackendGraph(convertedGraph);
+    }, [nodes,edges,applyBackendGraph]);
 
 
     const setAcceptingState = useCallback((event,node)=>{
@@ -45,7 +64,7 @@ function AutomataCanvasGraph(){
                     ...e,
                     data: {
                         ...e.data,
-                        start: !e.data.accepting,
+                        acceptingState: !e.data.accepting,
                     }}
             }))},[setNodes])
 
@@ -62,8 +81,8 @@ function AutomataCanvasGraph(){
                 },
                 data: {
                 label: nodeId,
-                start: true,
-                accepting: false,
+                startingState: false,
+                acceptingState: false,
                 },
             }
             return [...r,newNode];
@@ -98,7 +117,7 @@ function AutomataCanvasGraph(){
                     placeholder="Enter Regex here"
                     className="regex-input"/>
                     <button>Regex → NFA</button>
-                    <button>NFA → DFA</button>
+                    <button onClick={convertToDFA}>NFA → DFA</button>
                     <button onClick={addNode}>Add Node</button>
                     <button>Minimise DFA</button>
                     <button>Delete Tool</button>
