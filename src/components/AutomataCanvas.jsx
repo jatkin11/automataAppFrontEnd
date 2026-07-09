@@ -12,10 +12,14 @@ import '@xyflow/react/dist/style.css';
 import "../styles/AutomataCanvas.css";
 import { nextId } from './GlobalNodeIdGenerator';
 import { apiConvertToDFA, apiRegexToNFA } from '../api/automataApi';
+import CustomNode from './CustomNode';
 
 const initialNodes = [];
 const initialEdges = [];
 
+const nodeTypes = {
+    custom : CustomNode
+}
 
 function AutomataCanvasGraph(){
     
@@ -81,7 +85,7 @@ function AutomataCanvasGraph(){
             const nodeId = nextId(r);
             const newNode = {
                 id: nodeId,
-                type: "default",
+                type: "custom",
                 position: {
                 x: 100 + r.length * 200,
                 y: 100,
@@ -108,6 +112,7 @@ function AutomataCanvasGraph(){
                 onEdgesChange={onEdgesChange}
                 onNodeDoubleClick={setStartState}
                 onNodeContextMenu={setAcceptingState}
+                nodeTypes={nodeTypes}
                 onConnect={onConnect}
                 fitView>
             <Background color="#a8a49c" variant={BackgroundVariant.Dots} />
