@@ -6,6 +6,7 @@ import { ReactFlow,
         useNodesState,
         useEdgesState, 
         addEdge,
+        MarkerType,
         ConnectionMode,
         Panel } from '@xyflow/react';
 
@@ -28,7 +29,7 @@ function AutomataCanvasGraph(){
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
  
-    const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge({...params,label:"a",}, edgesSnapshot)),[],);
+    const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge({...params,label:"a",markerEnd:{type: MarkerType.ArrowClosed}}, edgesSnapshot)),[setEdges],);
     
     const setStartState = useCallback((event,node)=>{
         setNodes((r)=> 
@@ -76,7 +77,7 @@ function AutomataCanvasGraph(){
                     ...e,
                     data: {
                         ...e.data,
-                        acceptingState: !e.data.accepting,
+                        acceptingState: !e.data.acceptingState,
                     }}
             }))},[setNodes])
 
