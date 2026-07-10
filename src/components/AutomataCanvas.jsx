@@ -6,6 +6,7 @@ import { ReactFlow,
         useNodesState,
         useEdgesState, 
         addEdge,
+        ConnectionMode,
         Panel } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
@@ -113,6 +114,7 @@ function AutomataCanvasGraph(){
                 onNodeDoubleClick={setStartState}
                 onNodeContextMenu={setAcceptingState}
                 nodeTypes={nodeTypes}
+                connectionMode={ConnectionMode.Loose}
                 onConnect={onConnect}
                 fitView>
             <Background color="#a8a49c" variant={BackgroundVariant.Dots} />
