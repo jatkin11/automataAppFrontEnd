@@ -13,11 +13,49 @@ import { ReactFlow,
 import '@xyflow/react/dist/style.css';
 import "../styles/AutomataCanvas.css";
 import { nextId } from './GlobalNodeIdGenerator';
-import { apiConvertToDFA, apiRegexToNFA, apiTestWordOnRegex, apiTestWordOnAutomata, apiMinimiseDFA } from '../api/automataApi';
+import { apiConvertToDFA, apiRegexToNFA, apiTestWordOnRegex, apiTestWordOnAutomata, apiMinimiseDFA, apiConvertToString } from '../api/automataApi';
 import  CustomNode  from './CustomNode.jsx';
+import dagre from '@dagrejs/dagre';
 
 const initialNodes = [];
 const initialEdges = [];
+
+const nodeWidth = 172;
+const nodeHeight = 36;
+ 
+const getLayoutedElements = (nodes, edges, direction) => {
+  const isHorizontal = direction === 'LR';
+  const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+  dagreGraph.setGraph({ rankdir: direction });
+ 
+  nodes.forEach((node) => {
+    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+  });
+ 
+  edges.forEach((edge) => {
+    dagreGraph.setEdge(edge.source, edge.target);
+  });
+ 
+  dagre.layout(dagreGraph);
+ 
+  const newNodes = nodes.map((node) => {
+    const nodeWithPosition = dagreGraph.node(node.id);
+    const newNode = {
+      ...node,
+      targetPosition: isHorizontal ? 'left' : 'top',
+      sourcePosition: isHorizontal ? 'right' : 'bottom',
+      position: {
+        x: nodeWithPosition.x - nodeWidth / 2,
+        y: nodeWithPosition.y - nodeHeight / 2,
+      },
+    };
+ 
+    return newNode;
+  });
+ 
+  return { nodes: newNodes, edges };
+};
+
 
 const nodeTypes = {
     custom : CustomNode
@@ -31,6 +69,7 @@ function AutomataCanvasGraph(){
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
  
+    //NEED TO ADD VALIDATION - NEED TO MAKE SURE ONLY ONE SELF LOOP PER NODE
     const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge({...params,label:"a",markerEnd:{type: MarkerType.ArrowClosed}}, edgesSnapshot)),[setEdges],);
     
     const setStartState = useCallback((event,node)=>{
@@ -44,12 +83,19 @@ function AutomataCanvasGraph(){
             })))},[setNodes]);
 
 
-    const applyBackendGraph = useCallback((graph) => {
-      setNodes(graph.nodes);
-      setEdges(graph.edges);
+    const applyBackendGraph = useCallback(
+    (graph) => {
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+        graph.nodes,
+        graph.edges,
+        'LR',
+      );
+ 
+      setNodes([...layoutedNodes]);
+      setEdges([...layoutedEdges]);
     },
-    [setNodes, setEdges]
-    );
+    [setNodes, setEdges],
+  );
 
     const convertToDFA = useCallback (async () => {
         const currentGraph = {
@@ -59,6 +105,15 @@ function AutomataCanvasGraph(){
         const convertedGraph = await apiConvertToDFA(currentGraph)
         applyBackendGraph(convertedGraph);
     }, [nodes,edges,applyBackendGraph]);
+
+    const convertToString = useCallback (async () =>{
+        const currentGraph ={
+            nodes,
+            edges,
+        }
+        const regexString = await apiConvertToString(currentGraph);
+        console.log(regexString);
+    },[nodes,edges])
 
     //NEED TO ADD REGEX STRING VALIDATION, COULD POSSIBLY DO IT IN BACK END
     const convertToNFA = useCallback (async () => {
@@ -164,6 +219,7 @@ function AutomataCanvasGraph(){
                     className="regex-input"/>
                     <button onClick={convertToNFA}>Regex → NFA</button>
                     <button onClick={convertToDFA}>NFA → DFA</button>
+                    <button onClick={convertToString}>Automata → Regex</button>       
                     <button onClick={addNode}>Add Node</button>
                     <button onClick={minimiseDFA}>Minimise DFA</button>
                     <input type="text"
