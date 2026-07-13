@@ -16,6 +16,7 @@ import { nextId } from './GlobalNodeIdGenerator';
 import { apiConvertToDFA, apiRegexToNFA, apiTestWordOnRegex, apiTestWordOnAutomata, apiMinimiseDFA, apiConvertToString } from '../api/automataApi';
 import  CustomNode  from './CustomNode.jsx';
 import dagre from '@dagrejs/dagre';
+import { SmartFloatingEdge } from "@tisoap/react-flow-smart-edge";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -56,6 +57,7 @@ const getLayoutedElements = (nodes, edges, direction) => {
   return { nodes: newNodes, edges };
 };
 
+const edgeTypes = { default: SmartFloatingEdge };
 
 const nodeTypes = {
     custom : CustomNode
@@ -202,6 +204,7 @@ function AutomataCanvasGraph(){
                 nodeTypes={nodeTypes}
                 connectionMode={ConnectionMode.Loose}
                 onConnect={onConnect}
+                edgeTypes={edgeTypes}
                 fitView>
             <Background color="#a8a49c" variant={BackgroundVariant.Dots} />
 
