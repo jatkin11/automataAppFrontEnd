@@ -47,3 +47,79 @@ export async function apiRegexToNFA(regexString) {
   return await response.json();
 
 }
+
+
+
+
+export async function apiTestWordOnRegex(regexString, testWord) {
+  const response = await fetch(
+    "http://localhost:8080/api/automata/test-word-on-regex-string",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ regex: regexString, word: testWord }),
+    }
+  );
+
+  console.log(regexString, testWord);
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error("error:", response.status, error);
+    return;
+  }
+
+  return await response.json();
+
+}
+
+export async function apiTestWordOnAutomata(graph, testWord) {
+  const response = await fetch(
+    "http://localhost:8080/api/automata/test-word-on-automata",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ graph, word: testWord }),
+    }
+  );
+
+  console.log(graph, testWord);
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error("error:", response.status, error);
+    return;
+  }
+
+  return await response.json();
+
+}
+
+
+export async function apiMinimiseDFA(graph) {
+  const response = await fetch(
+    "http://localhost:8080/api/automata/minimise-dfa",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(graph),
+    }
+  );
+
+  console.log(graph);
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error("error:", response.status, error);
+    return;
+  }
+
+  return await response.json();
+
+}

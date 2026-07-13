@@ -13,7 +13,7 @@ import { ReactFlow,
 import '@xyflow/react/dist/style.css';
 import "../styles/AutomataCanvas.css";
 import { nextId } from './GlobalNodeIdGenerator';
-import { apiConvertToDFA, apiRegexToNFA } from '../api/automataApi';
+import { apiConvertToDFA, apiRegexToNFA, apiTestWordOnRegex, apiTestWordOnAutomata, apiMinimiseDFA } from '../api/automataApi';
 import  CustomNode  from './CustomNode.jsx';
 
 const initialNodes = [];
@@ -25,7 +25,9 @@ const nodeTypes = {
 
 function AutomataCanvasGraph(){
     
-    const [transitionSymbols, setTransitionSymbols] = useState(""); //need to use this to get the symbol from user input to add to the edge labels to pass to the back end
+    const [wordTest, setWordTest] = useState("");
+    //const [transitionSymbols, setTransitionSymbols] = useState("");
+    const [regexString, setRegexString] = useState("");   //need to use this to get the symbol from user input to add to the edge labels to pass to the back end
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
  
@@ -61,9 +63,9 @@ function AutomataCanvasGraph(){
     //NEED TO ADD REGEX STRING VALIDATION, COULD POSSIBLY DO IT IN BACK END
     const convertToNFA = useCallback (async () => {
 
-        const convertedGraph = await apiRegexToNFA(transitionSymbols)
+        const convertedGraph = await apiRegexToNFA(regexString)
         applyBackendGraph(convertedGraph);
-    }, [transitionSymbols,applyBackendGraph]);
+    }, [regexString,applyBackendGraph]);
 
 
     const setAcceptingState = useCallback((event,node)=>{
@@ -105,6 +107,34 @@ function AutomataCanvasGraph(){
 
     );
 
+    //NEED TO ADD VALIDATION HERE
+    const testWordOnAutomata = useCallback(async () => {
+        const currentGraph = {
+            nodes,
+            edges,
+        };
+        const acceptedString = await apiTestWordOnAutomata(currentGraph,wordTest)
+        console.log(acceptedString.accepted);
+    }, [nodes,edges,wordTest]);
+
+    //NEED TO ADD VALIDATION HERE
+    const testWordOnRegex = useCallback(async () => {
+        const acceptedString = await apiTestWordOnRegex(regexString,wordTest)
+        console.log(acceptedString.accepted);
+    }, [wordTest,regexString]);
+
+    //NEED TO ADD VALIDATION HERE
+    const minimiseDFA = useCallback (async () => {
+        const currentGraph = {
+            nodes,
+            edges,
+        };
+        const responseGraph = await apiMinimiseDFA(currentGraph);
+        applyBackendGraph(responseGraph);
+        console.log(responseGraph)
+    },[nodes,edges,applyBackendGraph]);
+
+
     return(
         <div className="canvas-graph">
             <ReactFlow
@@ -129,14 +159,19 @@ function AutomataCanvasGraph(){
             <Panel position="bottom-left">
                 <div className="tool-panel">
                     <input type="text"
-                    onChange={e => setTransitionSymbols(e.target.value)}
+                    onChange={e => setRegexString(e.target.value)}
                     placeholder="Enter Regex here"
                     className="regex-input"/>
                     <button onClick={convertToNFA}>Regex → NFA</button>
                     <button onClick={convertToDFA}>NFA → DFA</button>
                     <button onClick={addNode}>Add Node</button>
-                    <button>Minimise DFA</button>
-                    <button>Delete Tool</button>
+                    <button onClick={minimiseDFA}>Minimise DFA</button>
+                    <input type="text"
+                    onChange={e => setWordTest(e.target.value)}
+                    placeholder="Enter Word to test here"
+                    className="regex-input"/>
+                    <button onClick={testWordOnAutomata}>Test Word On Automata</button>
+                    <button onClick={testWordOnRegex}>Test Word On Regx</button>
                 </div>
             </Panel>
 
