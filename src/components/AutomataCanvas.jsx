@@ -68,7 +68,8 @@ function AutomataCanvasGraph(){
     const [wordTest, setWordTest] = useState("");
     //const [transitionSymbols, setTransitionSymbols] = useState("");
     const [regexString, setRegexString] = useState("");   //need to use this to get the symbol from user input to add to the edge labels to pass to the back end
-    const [wordAccepted, setWordAccepted] = useState(null);
+    const [wordAcceptedOnRegex, setWordAcceptedOnRegex] = useState(null);
+    const [wordAcceptedOnAutomata, setWordAcceptedOnAutomata] = useState(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
  
@@ -99,7 +100,7 @@ function AutomataCanvasGraph(){
         type: "default",
         markerEnd: {type: MarkerType.ArrowClosed, width:25, height: 25}
     }));
- 
+      setWordAcceptedOnAutomata(null);
       setNodes([...layoutedNodes]);
       setEdges([...edgesWithArrows]);
     },
@@ -148,7 +149,7 @@ function AutomataCanvasGraph(){
             }))},[setNodes])
 
     const addNode = useCallback(()=> {
-        
+        setWordAcceptedOnAutomata(null);
         setNodes((r)=> {
             const nodeId = nextId(r);
             const newNode = {
@@ -173,22 +174,22 @@ function AutomataCanvasGraph(){
 
     //NEED TO ADD VALIDATION HERE
     const testWordOnAutomata = useCallback(async () => {
-        setWordAccepted(null);
+        setWordAcceptedOnAutomata(null);
         const currentGraph = {
             nodes,
             edges,
         };
         const acceptedString = await apiTestWordOnAutomata(currentGraph,wordTest)
         console.log(acceptedString.accepted);
-        setWordAccepted(acceptedString.accepted);
+        setWordAcceptedOnAutomata(acceptedString.accepted);
     }, [nodes,edges,wordTest]);
 
     //NEED TO ADD VALIDATION HERE
     const testWordOnRegex = useCallback(async () => {
-        setWordAccepted(null);
+        setWordAcceptedOnRegex(null);
         const acceptedString = await apiTestWordOnRegex(regexString,wordTest)
         console.log(acceptedString.accepted);
-        setWordAccepted(acceptedString.accepted);
+        setWordAcceptedOnRegex(acceptedString.accepted);
     }, [wordTest,regexString]);
 
     //NEED TO ADD VALIDATION HERE
@@ -228,7 +229,7 @@ function AutomataCanvasGraph(){
             <Panel position="bottom-left">
                 <div className="tool-panel">
                     <input type="text"
-                    onChange={e => {setRegexString(e.target.value); setWordAccepted(null);}}
+                    onChange={e => {setRegexString(e.target.value); setWordAcceptedOnRegex(null); setWordAcceptedOnAutomata(null)}}
                     placeholder="Enter Regex here"
                     className="regex-input"/>
                     <button onClick={convertToNFA}>Regex → NFA</button>
@@ -237,14 +238,14 @@ function AutomataCanvasGraph(){
                     <button onClick={addNode}>Add Node</button>
                     <button onClick={minimiseDFA}>Minimise DFA</button>
                     <input type="text"
-                    onChange={e => {setWordTest(e.target.value); setWordAccepted(null);}}
+                    onChange={e => {setWordTest(e.target.value); setWordAcceptedOnRegex(null);setWordAcceptedOnAutomata(null)}}
                     placeholder="Enter Word to test here"
                     className="regex-input"/>
-                    <button onClick={testWordOnAutomata}>Test Word On Automata</button>
-                    <button onClick={testWordOnRegex}>Test Word On Regx</button>
-                    {wordAccepted !== null &&
-                    (wordAccepted ? "Word accepted!" : "Word rejected!")
-                    }
+                    <button onClick={testWordOnAutomata} className={wordAcceptedOnAutomata === true ? "word-test accepted" : wordAcceptedOnAutomata === false ? "word-test rejected" : "word-test"}
+                    >{wordAcceptedOnAutomata=== true ? "Accepted!" : wordAcceptedOnAutomata === false ? "Rejected!" : "Test Word On Automata"}</button>
+                    <button onClick={testWordOnRegex} className={wordAcceptedOnRegex=== true ? "word-test accepted" : wordAcceptedOnRegex === false ? "word-test rejected" : "word-test"}
+                    >{wordAcceptedOnRegex=== true ? "Accepted!" : wordAcceptedOnRegex === false ? "Rejected!" : "Test Word On Regex"}</button>
+                
                 </div>
             </Panel>
 
