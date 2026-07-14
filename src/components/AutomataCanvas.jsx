@@ -68,6 +68,7 @@ function AutomataCanvasGraph(){
     const [wordTest, setWordTest] = useState("");
     //const [transitionSymbols, setTransitionSymbols] = useState("");
     const [regexString, setRegexString] = useState("");   //need to use this to get the symbol from user input to add to the edge labels to pass to the back end
+    const [wordAccepted, setWordAccepted] = useState(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
  
@@ -172,18 +173,22 @@ function AutomataCanvasGraph(){
 
     //NEED TO ADD VALIDATION HERE
     const testWordOnAutomata = useCallback(async () => {
+        setWordAccepted(null);
         const currentGraph = {
             nodes,
             edges,
         };
         const acceptedString = await apiTestWordOnAutomata(currentGraph,wordTest)
         console.log(acceptedString.accepted);
+        setWordAccepted(acceptedString.accepted);
     }, [nodes,edges,wordTest]);
 
     //NEED TO ADD VALIDATION HERE
     const testWordOnRegex = useCallback(async () => {
+        setWordAccepted(null);
         const acceptedString = await apiTestWordOnRegex(regexString,wordTest)
         console.log(acceptedString.accepted);
+        setWordAccepted(acceptedString.accepted);
     }, [wordTest,regexString]);
 
     //NEED TO ADD VALIDATION HERE
@@ -223,7 +228,7 @@ function AutomataCanvasGraph(){
             <Panel position="bottom-left">
                 <div className="tool-panel">
                     <input type="text"
-                    onChange={e => setRegexString(e.target.value)}
+                    onChange={e => {setRegexString(e.target.value); setWordAccepted(null);}}
                     placeholder="Enter Regex here"
                     className="regex-input"/>
                     <button onClick={convertToNFA}>Regex → NFA</button>
@@ -232,11 +237,14 @@ function AutomataCanvasGraph(){
                     <button onClick={addNode}>Add Node</button>
                     <button onClick={minimiseDFA}>Minimise DFA</button>
                     <input type="text"
-                    onChange={e => setWordTest(e.target.value)}
+                    onChange={e => {setWordTest(e.target.value); setWordAccepted(null);}}
                     placeholder="Enter Word to test here"
                     className="regex-input"/>
                     <button onClick={testWordOnAutomata}>Test Word On Automata</button>
                     <button onClick={testWordOnRegex}>Test Word On Regx</button>
+                    {wordAccepted !== null &&
+                    (wordAccepted ? "Word accepted!" : "Word rejected!")
+                    }
                 </div>
             </Panel>
 
