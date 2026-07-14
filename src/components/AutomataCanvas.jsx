@@ -121,8 +121,9 @@ function AutomataCanvasGraph(){
             nodes,
             edges,
         }
-        const regexString = await apiConvertToString(currentGraph);
-        console.log(regexString);
+        const regexStringResponse = await apiConvertToString(currentGraph);
+        console.log(regexStringResponse);
+        setRegexString(regexStringResponse.regex);
     },[nodes,edges])
 
     //NEED TO ADD REGEX STRING VALIDATION, COULD POSSIBLY DO IT IN BACK END
@@ -229,6 +230,7 @@ function AutomataCanvasGraph(){
             <Panel position="bottom-left">
                 <div className="tool-panel">
                     <input type="text"
+                    value={regexString}
                     onChange={e => {setRegexString(e.target.value); setWordAcceptedOnRegex(null); setWordAcceptedOnAutomata(null)}}
                     placeholder="Enter Regex here"
                     className="regex-input"/>
