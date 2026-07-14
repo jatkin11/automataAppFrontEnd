@@ -21,8 +21,8 @@ import { SmartFloatingEdge } from "@tisoap/react-flow-smart-edge";
 const initialNodes = [];
 const initialEdges = [];
 
-const nodeWidth = 172;
-const nodeHeight = 36;
+const nodeWidth = 50;
+const nodeHeight = 50;
  
 const getLayoutedElements = (nodes, edges, direction) => {
   const isHorizontal = direction === 'LR';
@@ -74,7 +74,16 @@ function AutomataCanvasGraph(){
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
  
     //NEED TO ADD VALIDATION - NEED TO MAKE SURE ONLY ONE SELF LOOP PER NODE
-    const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge({...params,label:"a",markerEnd:{type: MarkerType.ArrowClosed, width:25, height: 25}}, edgesSnapshot)),[setEdges],);
+    const onConnect = useCallback((params) => {
+        const userInput = window.prompt("Enter Symbol") //NEED TO ADD SYMBOL VALIDATION HERE (inc comma serparate values + trimmed)
+
+        setEdges((edgesSnapshot) => 
+            addEdge(
+                {...params,
+                label:userInput,
+                markerEnd:{type: MarkerType.ArrowClosed, width:25, height: 25}}, 
+                edgesSnapshot))},
+                [setEdges]);
     
     const setStartState = useCallback((event,node)=>{
         setNodes((r)=> 
