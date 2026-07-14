@@ -72,7 +72,7 @@ function AutomataCanvasGraph(){
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
  
     //NEED TO ADD VALIDATION - NEED TO MAKE SURE ONLY ONE SELF LOOP PER NODE
-    const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge({...params,label:"a",markerEnd:{type: MarkerType.ArrowClosed}}, edgesSnapshot)),[setEdges],);
+    const onConnect = useCallback((params) => setEdges((edgesSnapshot) => addEdge({...params,label:"a",markerEnd:{type: MarkerType.ArrowClosed, width:25, height: 25}}, edgesSnapshot)),[setEdges],);
     
     const setStartState = useCallback((event,node)=>{
         setNodes((r)=> 
@@ -92,9 +92,15 @@ function AutomataCanvasGraph(){
         graph.edges,
         'LR',
       );
+
+      const edgesWithArrows = layoutedEdges.map((edge) => ({
+        ...edge,
+        type: "default",
+        markerEnd: {type: MarkerType.ArrowClosed, width:25, height: 25}
+    }));
  
       setNodes([...layoutedNodes]);
-      setEdges([...layoutedEdges]);
+      setEdges([...edgesWithArrows]);
     },
     [setNodes, setEdges],
   );
