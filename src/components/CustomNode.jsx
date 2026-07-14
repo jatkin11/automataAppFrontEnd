@@ -7,8 +7,6 @@ export default function CustomNode({ data,selected }){
             {data.label}
         <Handle id = "right" type="source" position={Position.Right}/>
         <Handle id ="left" type="target" position={Position.Left}/>
-        <Handle id ="top" type="source" position={Position.Top}/>
-        <Handle id= "bottom" type="source" position={Position.Bottom}/>
         </div>
     );
 
