@@ -182,6 +182,23 @@ function AutomataCanvasGraph(){
 
     );
 
+    const onEdgeDoubleClick = useCallback((event,edgeToAmend) =>{
+        event.preventDefault();
+
+        const userInput = window.prompt("Edit Symbol", String(edgeToAmend.label ?? ""))
+
+        setEdges((edges) =>
+            edges.map((edge) =>
+                edge.id === edgeToAmend.id ?
+        {
+            ...edge,
+            label: userInput,
+        } : edge
+
+            )
+        );
+    },[setEdges])
+
     //NEED TO ADD VALIDATION HERE
     const testWordOnAutomata = useCallback(async () => {
         setWordAcceptedOnAutomata(null);
@@ -223,6 +240,7 @@ function AutomataCanvasGraph(){
                 onEdgesChange={onEdgesChange}
                 onNodeDoubleClick={setStartState}
                 onNodeContextMenu={setAcceptingState}
+                onEdgeDoubleClick={onEdgeDoubleClick}
                 nodeTypes={nodeTypes}
                 connectionMode={ConnectionMode.Loose}
                 onConnect={onConnect}
