@@ -17,6 +17,7 @@ import { apiConvertToDFA, apiRegexToNFA, apiTestWordOnRegex, apiTestWordOnAutoma
 import  CustomNode  from './CustomNode.jsx';
 import dagre from '@dagrejs/dagre';
 import { SmartFloatingEdge } from "@tisoap/react-flow-smart-edge";
+import edgeSymbolValidation from "../validators/edgeSymbolValidation.js"
 
 const initialNodes = [];
 const initialEdges = [];
@@ -78,10 +79,16 @@ function AutomataCanvasGraph(){
     const onConnect = useCallback((params) => {
         const userInput = window.prompt("Enter Symbol") //NEED TO ADD SYMBOL VALIDATION HERE (inc comma serparate values + trimmed)
 
+        const validatedUserInput = edgeSymbolValidation(userInput);
+
+        if(validatedUserInput == null){
+            return null;
+        }
+
         setEdges((edgesSnapshot) => 
             addEdge(
                 {...params,
-                label:userInput,
+                label:validatedUserInput,
                 markerEnd:{type: MarkerType.ArrowClosed, width:25, height: 25}}, 
                 edgesSnapshot))},
                 [setEdges]);
@@ -188,12 +195,18 @@ function AutomataCanvasGraph(){
 
         const userInput = window.prompt("Edit Symbol", String(edgeToAmend.label ?? ""))
 
+        const validatedUserInput = edgeSymbolValidation(userInput);
+
+        if(validatedUserInput == null){
+            return null;
+        }
+
         setEdges((edges) =>
             edges.map((edge) =>
                 edge.id === edgeToAmend.id ?
         {
             ...edge,
-            label: userInput,
+            label: validatedUserInput,
         } : edge
 
             )
