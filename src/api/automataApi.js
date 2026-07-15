@@ -15,12 +15,10 @@ export async function apiConvertToDFA(graph) {
 
   if (!response.ok) {
     const error = await response.text();
-    console.error("error:", response.status, error);
-    return;
+    console.error(response.status, error);
+    throw new Error("Failed to convert to DFA")
   }
-
   return await response.json();
-
 }
 
 
@@ -40,8 +38,8 @@ export async function apiRegexToNFA(regexString) {
 
   if (!response.ok) {
     const error = await response.text();
-    console.error("error:", response.status, error);
-    return;
+    console.error(response.status, error);
+    throw new Error("Failed to convert to NFA")
   }
 
   return await response.json();
@@ -67,8 +65,8 @@ export async function apiTestWordOnRegex(regexString, testWord) {
 
   if (!response.ok) {
     const error = await response.text();
-    console.error("error:", response.status, error);
-    return;
+    console.error(response.status, error);
+    throw new Error("Failed to test word on Regex")
   }
 
   return await response.json();
@@ -91,8 +89,8 @@ export async function apiTestWordOnAutomata(graph, testWord) {
 
   if (!response.ok) {
     const error = await response.text();
-    console.error("error:", response.status, error);
-    return;
+    console.error(response.status, error);
+    throw new Error("Failed to test word on Automata")
   }
 
   return await response.json();
@@ -116,8 +114,8 @@ export async function apiMinimiseDFA(graph) {
 
   if (!response.ok) {
     const error = await response.text();
-    console.error("error:", response.status, error);
-    return;
+    console.error(response.status, error);
+    throw new Error("Failed to minimise DFA")
   }
 
   return await response.json();
@@ -141,8 +139,8 @@ export async function apiConvertToString(graph) {
 
   if (!response.ok) {
     const error = await response.text();
-    console.error("error:", response.status, error);
-    return;
+    console.error(response.status,error);
+    throw new Error("Failed to convert to Regex string")
   }
 
   return await response.json();

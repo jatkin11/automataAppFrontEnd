@@ -130,8 +130,12 @@ function AutomataCanvasGraph(){
             nodes,
             edges,
         };
+        try{
         const convertedGraph = await apiConvertToDFA(currentGraph)
         applyBackendGraph(convertedGraph);
+        } catch (error){
+            window.alert(error.message);
+        }
     }, [nodes,edges,applyBackendGraph]);
 
     const convertToString = useCallback (async () =>{
@@ -139,9 +143,13 @@ function AutomataCanvasGraph(){
             nodes,
             edges,
         }
+        try{
         const regexStringResponse = await apiConvertToString(currentGraph);
         console.log(regexStringResponse);
         setRegexString(regexStringResponse.regex);
+        } catch (error){
+            window.alert(error.message);
+        }
     },[nodes,edges])
 
     //NEED TO ADD REGEX STRING VALIDATION, COULD POSSIBLY DO IT IN BACK END
@@ -150,8 +158,12 @@ function AutomataCanvasGraph(){
             window.alert("Invalid Regex! Must consist of A-Z, a-z, 0-9, '()', 'ε', '∅', '|', '*'")
             return;
         }
+        try{
         const convertedGraph = await apiRegexToNFA(regexString)
         applyBackendGraph(convertedGraph);
+        } catch (error){
+            window.alert(error.message);
+        }
     }, [regexString,applyBackendGraph]);
 
 
@@ -224,9 +236,13 @@ function AutomataCanvasGraph(){
             nodes,
             edges,
         };
+        try{
         const acceptedString = await apiTestWordOnAutomata(currentGraph,wordTest)
         console.log(acceptedString.accepted);
         setWordAcceptedOnAutomata(acceptedString.accepted);
+        } catch (error){
+            window.alert(error.message);
+        }
     }, [nodes,edges,wordTest]);
 
     //NEED TO ADD VALIDATION HERE
@@ -236,9 +252,13 @@ function AutomataCanvasGraph(){
             window.alert("Invalid Regex! Must consist of A-Z, a-z, 0-9, '()','ε','∅','|', '*'")
             return;
         }
+        try{
         const acceptedString = await apiTestWordOnRegex(regexString,wordTest)
         console.log(acceptedString.accepted);
         setWordAcceptedOnRegex(acceptedString.accepted);
+        } catch (error){
+            window.alert(error.message);
+        }
     }, [wordTest,regexString]);
 
     //NEED TO ADD VALIDATION HERE
@@ -247,9 +267,13 @@ function AutomataCanvasGraph(){
             nodes,
             edges,
         };
+        try{
         const responseGraph = await apiMinimiseDFA(currentGraph);
         applyBackendGraph(responseGraph);
         console.log(responseGraph)
+        } catch (error){
+            window.alert(error.message);
+        }
     },[nodes,edges,applyBackendGraph]);
 
 
