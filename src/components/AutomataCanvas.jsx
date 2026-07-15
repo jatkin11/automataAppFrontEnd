@@ -18,6 +18,7 @@ import  CustomNode  from './CustomNode.jsx';
 import dagre from '@dagrejs/dagre';
 import { SmartFloatingEdge } from "@tisoap/react-flow-smart-edge";
 import edgeSymbolValidation from "../validators/edgeSymbolValidation.js"
+import regexValidation from '../validators/regexValidation.js';
 
 const initialNodes = [];
 const initialEdges = [];
@@ -124,7 +125,7 @@ function AutomataCanvasGraph(){
     [setNodes, setEdges],
   );
 
-    const convertToDFA = useCallback (async () => {
+    const convertToDFA = useCallback (async () => {      
         const currentGraph = {
             nodes,
             edges,
@@ -145,7 +146,10 @@ function AutomataCanvasGraph(){
 
     //NEED TO ADD REGEX STRING VALIDATION, COULD POSSIBLY DO IT IN BACK END
     const convertToNFA = useCallback (async () => {
-
+        if(!regexValidation(regexString)){
+            window.alert("Invalid Regex! Must consist of A-Z, a-z, 0-9, '()', 'ε', '∅', '|', '*'")
+            return;
+        }
         const convertedGraph = await apiRegexToNFA(regexString)
         applyBackendGraph(convertedGraph);
     }, [regexString,applyBackendGraph]);
@@ -228,6 +232,10 @@ function AutomataCanvasGraph(){
     //NEED TO ADD VALIDATION HERE
     const testWordOnRegex = useCallback(async () => {
         setWordAcceptedOnRegex(null);
+        if(!regexValidation(regexString)){
+            window.alert("Invalid Regex! Must consist of A-Z, a-z, 0-9, '()','ε','∅','|', '*'")
+            return;
+        }
         const acceptedString = await apiTestWordOnRegex(regexString,wordTest)
         console.log(acceptedString.accepted);
         setWordAcceptedOnRegex(acceptedString.accepted);
