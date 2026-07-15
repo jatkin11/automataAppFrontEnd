@@ -21,8 +21,8 @@ import { SmartFloatingEdge } from "@tisoap/react-flow-smart-edge";
 const initialNodes = [];
 const initialEdges = [];
 
-const nodeWidth = 50;
-const nodeHeight = 50;
+const nodeWidth = 70;
+const nodeHeight = 70;
  
 const getLayoutedElements = (nodes, edges, direction) => {
   const isHorizontal = direction === 'LR';
@@ -57,7 +57,8 @@ const getLayoutedElements = (nodes, edges, direction) => {
   return { nodes: newNodes, edges };
 };
 
-const edgeTypes = { default: SmartFloatingEdge };
+const edgeTypes = { default: SmartFloatingEdge
+ };
 
 const nodeTypes = {
     custom : CustomNode
