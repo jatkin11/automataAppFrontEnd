@@ -47,8 +47,6 @@ export async function apiRegexToNFA(regexString) {
 }
 
 
-
-
 export async function apiTestWordOnRegex(regexString, testWord) {
   const response = await fetch(
     "http://localhost:8080/api/automata/test-word-on-regex-string",

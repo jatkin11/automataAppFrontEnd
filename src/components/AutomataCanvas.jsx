@@ -194,7 +194,7 @@ function AutomataCanvasGraph(){
                 y: 100,
                 },
                 data: {
-                label: nodeId,
+                label: `q${nodeId}`,
                 startingState: false,
                 acceptingState: false,
                 },
