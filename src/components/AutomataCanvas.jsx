@@ -19,6 +19,7 @@ import dagre from '@dagrejs/dagre';
 import { SmartFloatingEdge } from "@tisoap/react-flow-smart-edge";
 import edgeSymbolValidation from "../validators/edgeSymbolValidation.js"
 import regexValidation from '../validators/regexValidation.js';
+import filenameValidation from '../validators/filenameValidation.js';
 
 const initialNodes = [];
 const initialEdges = [];
@@ -154,7 +155,6 @@ function AutomataCanvasGraph(){
         }
     },[nodes,edges])
 
-    //NEED TO ADD REGEX STRING VALIDATION, COULD POSSIBLY DO IT IN BACK END
     const convertToNFA = useCallback (async () => {
         if(!regexValidation(regexString)){
             window.alert("Invalid Regex! Must consist of A-Z, a-z, 0-9, '()', 'ε', '∅', '|', '*'")
@@ -286,10 +286,10 @@ function AutomataCanvasGraph(){
         setHelpPanelToggle(false)
     )
 
-    const downloadFile = useCallback(({data, fileName, fileType}) => {
+    const downloadFile = useCallback(({data, filename, fileType}) => {
         const blob = new Blob([data], {type: fileType});
         const a = document.createElement('a');
-        a.download = fileName;
+        a.download = filename;
         a.href = window.URL.createObjectURL(blob);
         a.click()
         a.remove();
@@ -311,18 +311,23 @@ function AutomataCanvasGraph(){
 
     })
 
-    //NEED TO ADD FILENAME VALIDATION
     const downloadJson = useCallback((e)=> {
         e.preventDefault()
         const userInput = window.prompt("Enter filename");
+        const filename = filenameValidation(userInput);
+
+        if(filename === null){
+            window.alert("Invalid filename, must contain only letters, numbers, hyphens and underscores")
+            return;
+        }
         const currentGraph = {
             nodes,
             edges,
         };
         downloadFile({
             data: JSON.stringify(currentGraph),
-            fileName: userInput,
-            fileType: 'text/json',
+            filename: userInput,
+            fileType: 'application/json',
         })
     })
 
