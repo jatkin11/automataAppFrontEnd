@@ -324,6 +324,12 @@ function AutomataCanvasGraph(){
                 </div>
             </Panel>
 
+            <Panel position="top-right">
+                <div className="help-panel">
+                    <button>?</button>
+                </div>
+            </Panel>
+
             </ReactFlow>
         </div>
     );
