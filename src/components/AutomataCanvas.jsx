@@ -75,6 +75,7 @@ function AutomataCanvasGraph(){
     const [wordAcceptedOnAutomata, setWordAcceptedOnAutomata] = useState(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const [helpPanelToggle, setHelpPanelToggle] = useState(false);
  
     //NEED TO ADD VALIDATION - NEED TO MAKE SURE ONLY ONE SELF LOOP PER NODE
     const onConnect = useCallback((params) => {
@@ -276,6 +277,13 @@ function AutomataCanvasGraph(){
         }
     },[nodes,edges,applyBackendGraph]);
 
+    const toggleHelpPanel = useCallback(() =>
+        setHelpPanelToggle(r => !r)
+   )
+
+    const closeHelpPanel = useCallback(() =>
+        setHelpPanelToggle(false)
+    )
 
     return(
         <div className="canvas-graph">
@@ -326,9 +334,27 @@ function AutomataCanvasGraph(){
 
             <Panel position="top-right">
                 <div className="help-panel">
-                    <button>?</button>
+                    <button onClick={toggleHelpPanel}>?</button>
+                </div>
+
+            </Panel>
+
+
+            {helpPanelToggle && (
+            <Panel position="top-center">
+                <div className="help-menu">
+                    <h2>
+                        HELP
+                    </h2>
+                    <button onClick={closeHelpPanel}>x</button>
+                    <p>‣ Right click a node to make an 'accepting' state</p>
+                    <p>‣ Double click a node to make it a 'starting' state</p>
+                    <p>‣ Double click a transition to edit the symbol</p>
+                    <p>‣ Delete node/transition by selecting and pressing 'del'</p>
+                    <p></p>
                 </div>
             </Panel>
+            )}
 
             </ReactFlow>
         </div>

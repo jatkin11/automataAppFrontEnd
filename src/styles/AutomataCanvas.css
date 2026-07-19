@@ -89,3 +89,47 @@
     box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px; 
     border-radius: 50%;    
 }
+
+
+.help-menu{
+    position : relative;
+    padding: 1px 20px ;
+    background: #c8c4bc;
+    color: #a8a49c;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px; 
+    border-radius: 30px;
+}
+
+.help-menu button{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 25px;
+    width: 25px;
+    padding: 1px;
+    align-items: center;
+    justify-content: center;
+    background: #3a3a3a;
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.6), 0  1px 0 rgba(255, 255, 255, 0.12);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px; 
+    border-radius: 50%;  
+}
+
+.help-menu h2{
+    font-size: 25px;
+    font-weight: 800;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.help-menu p{
+    font-size: 15px;
+    font-weight: 400;
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+    align-items: center;
+    justify-content: center;
+}
