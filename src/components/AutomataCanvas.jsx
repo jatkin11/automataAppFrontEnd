@@ -285,6 +285,30 @@ function AutomataCanvasGraph(){
         setHelpPanelToggle(false)
     )
 
+    const downloadFile = useCallback(({data, fileName, fileType}) => {
+        const blob = new Blob([data], {type: fileType});
+        const a = document.createElement('a');
+        a.download = fileName;
+        a.href = window.URL.createObjectURL(blob);
+        a.click()
+        a.remove();
+    }
+)
+ 
+    const downloadJson = useCallback((e)=> {
+        e.preventDefault()
+        const userInput = window.prompt("Enter filename");
+        const currentGraph = {
+            nodes,
+            edges,
+        };
+        downloadFile({
+            data: JSON.stringify(currentGraph),
+            fileName: userInput,
+            fileType: 'text/json',
+        })
+    })
+
     return(
         <div className="canvas-graph">
             <ReactFlow
@@ -328,7 +352,7 @@ function AutomataCanvasGraph(){
                     >{wordAcceptedOnAutomata=== true ? "Accepted!" : wordAcceptedOnAutomata === false ? "Rejected!" : "Test Word On Automata"}</button>
                     <button onClick={testWordOnRegex} className={wordAcceptedOnRegex=== true ? "word-test accepted" : wordAcceptedOnRegex === false ? "word-test rejected" : "word-test"}
                     >{wordAcceptedOnRegex=== true ? "Accepted!" : wordAcceptedOnRegex === false ? "Rejected!" : "Test Word On Regex"}</button>
-                
+                    <button onClick={downloadJson}>Download JSON</button>
                 </div>
             </Panel>
 
