@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { ReactFlow, 
         ReactFlowProvider, 
         Background, 
@@ -76,6 +76,7 @@ function AutomataCanvasGraph(){
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     const [helpPanelToggle, setHelpPanelToggle] = useState(false);
+    const inputRef = useRef(null);
  
     //NEED TO ADD VALIDATION - NEED TO MAKE SURE ONLY ONE SELF LOOP PER NODE
     const onConnect = useCallback((params) => {
@@ -292,9 +293,25 @@ function AutomataCanvasGraph(){
         a.href = window.URL.createObjectURL(blob);
         a.click()
         a.remove();
-    }
-)
- 
+    })  
+
+    //NEED TO CONSIDER THIS, AS MAY BE A VALIDATION NIGHTMARE...
+    const importJson = useCallback(async (event) => {
+        const file = event.target.files?.[0];
+
+        if(!file){
+            return;
+        }
+
+        const jsonFile = await file.text();
+        const graph = JSON.parse(jsonFile);
+
+        applyBackendGraph(graph);
+        event.target.value = "";
+
+    })
+
+    //NEED TO ADD FILENAME VALIDATION
     const downloadJson = useCallback((e)=> {
         e.preventDefault()
         const userInput = window.prompt("Enter filename");
@@ -353,6 +370,8 @@ function AutomataCanvasGraph(){
                     <button onClick={testWordOnRegex} className={wordAcceptedOnRegex=== true ? "word-test accepted" : wordAcceptedOnRegex === false ? "word-test rejected" : "word-test"}
                     >{wordAcceptedOnRegex=== true ? "Accepted!" : wordAcceptedOnRegex === false ? "Rejected!" : "Test Word On Regex"}</button>
                     <button onClick={downloadJson}>Download JSON</button>
+                    <input type="file" ref={inputRef} accept=".json/application/json" onChange={importJson} hidden></input>
+                    <button onClick={() => inputRef.current?.click()}>Import JSON</button>
                 </div>
             </Panel>
 
