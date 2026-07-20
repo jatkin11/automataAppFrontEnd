@@ -20,6 +20,7 @@ import { SmartFloatingEdge } from "@tisoap/react-flow-smart-edge";
 import edgeSymbolValidation from "../validators/edgeSymbolValidation.js"
 import regexValidation from '../validators/regexValidation.js';
 import filenameValidation from '../validators/filenameValidation.js';
+import wordValidation from '../validators/wordValidation.js';
 
 const initialNodes = [];
 const initialEdges = [];
@@ -70,8 +71,7 @@ const nodeTypes = {
 function AutomataCanvasGraph(){
     
     const [wordTest, setWordTest] = useState("");
-    //const [transitionSymbols, setTransitionSymbols] = useState("");
-    const [regexString, setRegexString] = useState("");   //need to use this to get the symbol from user input to add to the edge labels to pass to the back end
+    const [regexString, setRegexString] = useState(""); 
     const [wordAcceptedOnRegex, setWordAcceptedOnRegex] = useState(null);
     const [wordAcceptedOnAutomata, setWordAcceptedOnAutomata] = useState(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -79,9 +79,9 @@ function AutomataCanvasGraph(){
     const [helpPanelToggle, setHelpPanelToggle] = useState(false);
     const inputRef = useRef(null);
  
-    //NEED TO ADD VALIDATION - NEED TO MAKE SURE ONLY ONE SELF LOOP PER NODE
+    //NEED TO ADD SELF-LOOP VALIDATION
     const onConnect = useCallback((params) => {
-        const userInput = window.prompt("Enter Symbol") //NEED TO ADD SYMBOL VALIDATION HERE (inc comma serparate values + trimmed)
+        const userInput = window.prompt("Enter Symbol")
 
         const validatedUserInput = edgeSymbolValidation(userInput);
 
@@ -107,7 +107,7 @@ function AutomataCanvasGraph(){
                 },
             })))},[setNodes]);
 
-
+    //NEED TO ADD GRAPH VALIDATION
     const applyBackendGraph = useCallback(
     (graph) => {
       const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
@@ -128,6 +128,7 @@ function AutomataCanvasGraph(){
     [setNodes, setEdges],
   );
 
+    //NEED TO ADD GRAPH VALIDATION
     const convertToDFA = useCallback (async () => {      
         const currentGraph = {
             nodes,
@@ -231,13 +232,18 @@ function AutomataCanvasGraph(){
         );
     },[setEdges])
 
-    //NEED TO ADD VALIDATION HERE
+    //NEED TO ADD GRAPH VALIDATION
     const testWordOnAutomata = useCallback(async () => {
         setWordAcceptedOnAutomata(null);
         const currentGraph = {
             nodes,
             edges,
         };
+        const word = wordValidation(wordTest);
+        if(word=== null){
+            window.alert("Invalid word! Must consist of A-Z, a-z, 0-9 (no spaces)");
+            return;
+        }
         try{
         const acceptedString = await apiTestWordOnAutomata(currentGraph,wordTest)
         console.log(acceptedString.accepted);
@@ -247,15 +253,19 @@ function AutomataCanvasGraph(){
         }
     }, [nodes,edges,wordTest]);
 
-    //NEED TO ADD VALIDATION HERE
     const testWordOnRegex = useCallback(async () => {
         setWordAcceptedOnRegex(null);
         if(!regexValidation(regexString)){
             window.alert("Invalid Regex! Must consist of A-Z, a-z, 0-9, '()','ε','∅','|', '*'")
             return;
         }
+        const word = wordValidation(wordTest);
+            if(word === null){
+            window.alert("Invalid word! Must consist of A-Z, a-z, 0-9 (no spaces)");
+            return;
+        }
         try{
-        const acceptedString = await apiTestWordOnRegex(regexString,wordTest)
+        const acceptedString = await apiTestWordOnRegex(regexString,word)
         console.log(acceptedString.accepted);
         setWordAcceptedOnRegex(acceptedString.accepted);
         } catch (error){
@@ -263,7 +273,7 @@ function AutomataCanvasGraph(){
         }
     }, [wordTest,regexString]);
 
-    //NEED TO ADD VALIDATION HERE
+    //NEED TO ADD GRAPH VALIDATION
     const minimiseDFA = useCallback (async () => {
         const currentGraph = {
             nodes,
@@ -295,7 +305,7 @@ function AutomataCanvasGraph(){
         a.remove();
     })  
 
-    //NEED TO CONSIDER THIS, AS MAY BE A VALIDATION NIGHTMARE...
+    //NEED TO ADD GRAPH VALIDATION
     const importJson = useCallback(async (event) => {
         const file = event.target.files?.[0];
 
@@ -368,7 +378,7 @@ function AutomataCanvasGraph(){
                     <button onClick={minimiseDFA}>Minimise DFA</button>
                     <input type="text"
                     onChange={e => {setWordTest(e.target.value); setWordAcceptedOnRegex(null);setWordAcceptedOnAutomata(null)}}
-                    placeholder="Enter Word to test here"
+                    placeholder="Enter Word to test"
                     className="regex-input"/>
                     <button onClick={testWordOnAutomata} className={wordAcceptedOnAutomata === true ? "word-test accepted" : wordAcceptedOnAutomata === false ? "word-test rejected" : "word-test"}
                     >{wordAcceptedOnAutomata=== true ? "Accepted!" : wordAcceptedOnAutomata === false ? "Rejected!" : "Test Word On Automata"}</button>
