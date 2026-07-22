@@ -404,6 +404,7 @@ function AutomataCanvasGraph(){
                     <button onClick={addNode}>Add Node</button>
                     <button onClick={minimiseDFA}>Minimise DFA</button>
                     <input type="text"
+                    value={wordTest}
                     onChange={e => {setWordTest(e.target.value); setWordAcceptedOnRegex(null);setWordAcceptedOnAutomata(null)}}
                     placeholder="Enter Word to test"
                     className="regex-input"/>
