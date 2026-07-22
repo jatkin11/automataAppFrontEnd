@@ -94,7 +94,13 @@ function AutomataCanvasGraph(){
             addEdge(
                 {...params,
                 label:validatedUserInput,
-                markerEnd:{type: MarkerType.ArrowClosed, width:25, height: 25}}, 
+                style: {
+                    strokeWidth: 1.5
+                },
+                labelStyle:{
+                    fontFamily: "'Courier New', monospace"
+                },
+                markerEnd:{type: MarkerType.ArrowClosed, width:15, height: 15}}, 
                 edgesSnapshot))},
                 [setEdges]);
     
@@ -121,7 +127,13 @@ function AutomataCanvasGraph(){
       const edgesWithArrows = layoutedEdges.map((edge) => ({
         ...edge,
         type: "default",
-        markerEnd: {type: MarkerType.ArrowClosed, width:25, height: 25}
+        style: {
+            strokeWidth: 1.5
+                },
+        labelStyle:{
+            fontFamily: "'Courier New', monospace"
+        },
+        markerEnd: {type: MarkerType.ArrowClosed, width:15, height: 15}
     }));
       setWordAcceptedOnAutomata(null);
       setNodes([...layoutedNodes]);
