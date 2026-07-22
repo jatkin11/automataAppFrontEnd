@@ -8,7 +8,8 @@ import { ReactFlow,
         addEdge,
         MarkerType,
         ConnectionMode,
-        Panel } from '@xyflow/react';
+        Panel,
+        useReactFlow } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
 import "../styles/AutomataCanvas.css";
@@ -79,6 +80,7 @@ function AutomataCanvasGraph(){
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     const [helpPanelToggle, setHelpPanelToggle] = useState(false);
     const inputRef = useRef(null);
+    const { screenToFlowPosition } = useReactFlow();
  
     //NEED TO ADD SELF-LOOP VALIDATION
     const onConnect = useCallback((params) => {
@@ -201,7 +203,9 @@ function AutomataCanvasGraph(){
                     }}
             }))},[setNodes])
 
-    const addNode = useCallback(()=> {
+    const addNode = useCallback((e)=> {
+        e.preventDefault();
+        const position = screenToFlowPosition({x: e.clientX, y: e.clientY})
         setWordAcceptedOnAutomata(null);
         setNodes((r)=> {
             const nodeId = nextId(r);
@@ -209,8 +213,8 @@ function AutomataCanvasGraph(){
                 id: nodeId,
                 type: "custom",
                 position: {
-                x: 100 + r.length * 200,
-                y: 100,
+                    x:position.x - 35,
+                    y:position.y -35
                 },
                 data: {
                 label: `q${nodeId}`,
@@ -221,7 +225,7 @@ function AutomataCanvasGraph(){
             return [...r,newNode];
         });
 
-        }, [setNodes]
+        }, [setNodes, screenToFlowPosition]
 
     );
 
@@ -377,6 +381,7 @@ function AutomataCanvasGraph(){
                 onEdgesChange={onEdgesChange}
                 onNodeDoubleClick={setStartState}
                 onNodeContextMenu={setAcceptingState}
+                onPaneContextMenu={addNode}
                 onEdgeDoubleClick={onEdgeDoubleClick}
                 nodeTypes={nodeTypes}
                 connectionMode={ConnectionMode.Loose}
@@ -401,7 +406,6 @@ function AutomataCanvasGraph(){
                     <button onClick={convertToNFA}>Regex → NFA</button>
                     <button onClick={convertToDFA}>NFA → DFA</button>
                     <button onClick={convertToString}>Automata → Regex</button>       
-                    <button onClick={addNode}>Add Node</button>
                     <button onClick={minimiseDFA}>Minimise DFA</button>
                     <input type="text"
                     value={wordTest}
@@ -434,6 +438,7 @@ function AutomataCanvasGraph(){
                         HELP
                     </h2>
                     <button onClick={closeHelpPanel}>x</button>
+                    <p>‣ Right click on screen to add a node</p>
                     <p>‣ Right click a node to make an 'accepting' state</p>
                     <p>‣ Double click a node to make it a 'starting' state</p>
                     <p>‣ Double click a transition to edit the symbol</p>
