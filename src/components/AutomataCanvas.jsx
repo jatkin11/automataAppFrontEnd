@@ -21,6 +21,7 @@ import edgeSymbolValidation from "../validators/edgeSymbolValidation.js"
 import regexValidation from '../validators/regexValidation.js';
 import filenameValidation from '../validators/filenameValidation.js';
 import wordValidation from '../validators/wordValidation.js';
+import { validateGraph } from '../validators/graphValidation.js';
 
 const initialNodes = [];
 const initialEdges = [];
@@ -107,10 +108,11 @@ function AutomataCanvasGraph(){
                 },
             })))},[setNodes]);
 
-    //NEED TO ADD GRAPH VALIDATION
+
     const applyBackendGraph = useCallback(
     (graph) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+        validateGraph(graph);
+        const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
         graph.nodes,
         graph.edges,
         'LR',
@@ -128,13 +130,13 @@ function AutomataCanvasGraph(){
     [setNodes, setEdges],
   );
 
-    //NEED TO ADD GRAPH VALIDATION
     const convertToDFA = useCallback (async () => {      
+        try{        
         const currentGraph = {
             nodes,
             edges,
         };
-        try{
+        validateGraph(currentGraph);
         const convertedGraph = await apiConvertToDFA(currentGraph)
         applyBackendGraph(convertedGraph);
         } catch (error){
@@ -143,11 +145,13 @@ function AutomataCanvasGraph(){
     }, [nodes,edges,applyBackendGraph]);
 
     const convertToString = useCallback (async () =>{
+
+        try{        
         const currentGraph ={
             nodes,
             edges,
         }
-        try{
+        validateGraph(currentGraph);
         const regexStringResponse = await apiConvertToString(currentGraph);
         console.log(regexStringResponse);
         setRegexString(regexStringResponse.regex);
@@ -232,20 +236,20 @@ function AutomataCanvasGraph(){
         );
     },[setEdges])
 
-    //NEED TO ADD GRAPH VALIDATION
     const testWordOnAutomata = useCallback(async () => {
         setWordAcceptedOnAutomata(null);
-        const currentGraph = {
-            nodes,
-            edges,
-        };
         const word = wordValidation(wordTest);
         if(word=== null){
             window.alert("Invalid word! Must consist of A-Z, a-z, 0-9 (no spaces)");
             return;
         }
-        try{
-        const acceptedString = await apiTestWordOnAutomata(currentGraph,wordTest)
+        try{        
+        const currentGraph = {
+            nodes,
+            edges,
+        };        
+        validateGraph(currentGraph);
+        const acceptedString = await apiTestWordOnAutomata(currentGraph,word)
         console.log(acceptedString.accepted);
         setWordAcceptedOnAutomata(acceptedString.accepted);
         } catch (error){
@@ -273,13 +277,14 @@ function AutomataCanvasGraph(){
         }
     }, [wordTest,regexString]);
 
-    //NEED TO ADD GRAPH VALIDATION
+
     const minimiseDFA = useCallback (async () => {
+        try{
         const currentGraph = {
             nodes,
             edges,
         };
-        try{
+        validateGraph(currentGraph);
         const responseGraph = await apiMinimiseDFA(currentGraph);
         applyBackendGraph(responseGraph);
         console.log(responseGraph)
@@ -305,19 +310,20 @@ function AutomataCanvasGraph(){
         a.remove();
     })  
 
-    //NEED TO ADD GRAPH VALIDATION
     const importJson = useCallback(async (event) => {
         const file = event.target.files?.[0];
 
         if(!file){
             return;
         }
-
+        try{
         const jsonFile = await file.text();
         const graph = JSON.parse(jsonFile);
-
         applyBackendGraph(graph);
-        event.target.value = "";
+        event.target.value = "";}
+        catch(error){
+            window.alert(error.message);
+        }
 
     })
 
@@ -336,7 +342,7 @@ function AutomataCanvasGraph(){
         };
         downloadFile({
             data: JSON.stringify(currentGraph),
-            filename: userInput,
+            filename: filename,
             fileType: 'application/json',
         })
     })
