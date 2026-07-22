@@ -359,6 +359,15 @@ function AutomataCanvasGraph(){
         })
     })
 
+    const clearScreen = useCallback(() => {
+        setNodes(initialNodes);
+        setEdges(initialEdges);
+        setRegexString("");
+        setWordTest("");
+        setWordAcceptedOnAutomata(null);
+        setWordAcceptedOnRegex(null);
+    });
+
     return(
         <div className="canvas-graph">
             <ReactFlow
@@ -405,6 +414,7 @@ function AutomataCanvasGraph(){
                     <button onClick={downloadJson}>Download JSON</button>
                     <input type="file" ref={inputRef} accept=".json/application/json" onChange={importJson} hidden></input>
                     <button onClick={() => inputRef.current?.click()}>Import JSON</button>
+                    <button onClick={clearScreen}>Clear All</button>
                 </div>
             </Panel>
 
