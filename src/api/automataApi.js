@@ -1,7 +1,7 @@
 
 export async function apiConvertToDFA(graph) {
   const response = await fetch(
-    "http://localhost:8080/api/automata/convert-to-dfa",
+    "https://automataappbackend.onrender.com/api/automata/convert-to-dfa",
     {
       method: "POST",
       headers: {
@@ -24,7 +24,7 @@ export async function apiConvertToDFA(graph) {
 
 export async function apiRegexToNFA(regexString) {
   const response = await fetch(
-    "http://localhost:8080/api/automata/convert-to-nfa",
+    "https://automataappbackend.onrender.com/api/automata/convert-to-nfa",
     {
       method: "POST",
       headers: {
@@ -49,7 +49,7 @@ export async function apiRegexToNFA(regexString) {
 
 export async function apiTestWordOnRegex(regexString, testWord) {
   const response = await fetch(
-    "http://localhost:8080/api/automata/test-word-on-regex-string",
+    "https://automataappbackend.onrender.com/api/automata/test-word-on-regex-string",
     {
       method: "POST",
       headers: {
@@ -73,7 +73,7 @@ export async function apiTestWordOnRegex(regexString, testWord) {
 
 export async function apiTestWordOnAutomata(graph, testWord) {
   const response = await fetch(
-    "http://localhost:8080/api/automata/test-word-on-automata",
+    "https://automataappbackend.onrender.com/api/automata/test-word-on-automata",
     {
       method: "POST",
       headers: {
@@ -98,7 +98,7 @@ export async function apiTestWordOnAutomata(graph, testWord) {
 
 export async function apiMinimiseDFA(graph) {
   const response = await fetch(
-    "http://localhost:8080/api/automata/minimise-dfa",
+    "https://automataappbackend.onrender.com/api/automata/minimise-dfa",
     {
       method: "POST",
       headers: {
@@ -123,7 +123,7 @@ export async function apiMinimiseDFA(graph) {
 
 export async function apiConvertToString(graph) {
   const response = await fetch(
-    "http://localhost:8080/api/automata/convert-to-regex-string",
+    "https://automataappbackend.onrender.com/api/automata/convert-to-regex-string",
     {
       method: "POST",
       headers: {
