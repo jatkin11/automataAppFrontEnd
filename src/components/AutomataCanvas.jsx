@@ -13,55 +13,19 @@ import { ReactFlow,
 
 import '@xyflow/react/dist/style.css';
 import "../styles/AutomataCanvas.css";
-import { nextId } from './GlobalNodeIdGenerator';
+import { nextId } from '../utilties/GlobalNodeIdGenerator.js';
 import { apiConvertToDFA, apiRegexToNFA, apiTestWordOnRegex, apiTestWordOnAutomata, apiMinimiseDFA, apiConvertToString } from '../api/automataApi';
 import  CustomNode  from './CustomNode.jsx';
-import dagre from '@dagrejs/dagre';
 import { SmartFloatingEdge } from "@tisoap/react-flow-smart-edge";
 import edgeSymbolValidation from "../validators/edgeSymbolValidation.js"
 import regexValidation from '../validators/regexValidation.js';
 import filenameValidation from '../validators/filenameValidation.js';
 import wordValidation from '../validators/wordValidation.js';
 import { validateGraph } from '../validators/graphValidation.js';
+import getLayoutedElements from '../utilties/layoutGraph.js';
 
 const initialNodes = [];
 const initialEdges = [];
-
-const nodeWidth = 70;
-const nodeHeight = 70;
- 
-const getLayoutedElements = (nodes, edges, direction) => {
-  const isHorizontal = direction === 'LR';
-  const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  dagreGraph.setGraph({ rankdir: direction });
- 
-  nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-  });
- 
-  edges.forEach((edge) => {
-    dagreGraph.setEdge(edge.source, edge.target);
-  });
- 
-  dagre.layout(dagreGraph);
- 
-  const newNodes = nodes.map((node) => {
-    const nodeWithPosition = dagreGraph.node(node.id);
-    const newNode = {
-      ...node,
-      targetPosition: isHorizontal ? 'left' : 'top',
-      sourcePosition: isHorizontal ? 'right' : 'bottom',
-      position: {
-        x: nodeWithPosition.x - nodeWidth / 2,
-        y: nodeWithPosition.y - nodeHeight / 2,
-      },
-    };
- 
-    return newNode;
-  });
- 
-  return { nodes: newNodes, edges };
-};
 
 const edgeTypes = { default: SmartFloatingEdge
  };
