@@ -34,15 +34,13 @@ export function validateGraph(graph){
         throw new Error("Invalid Graph: Invalid Node");
         }
 
-        if(!/^[0-9]+$/.test(node.id)){
+        if(typeof node.id !== "string" || !/^[0-9]+$/.test(node.id)){
             throw new Error(`Invalid Graph: Invalid Node: ${node.id}`)
         }
 
         if(nodeIds.has(node.id)){
             throw new Error(`Invalid Graph: Duplicated Node ID: ${node.id}`)
         }
-
-
 
         if(!node.data || typeof node.data !== "object"){
             throw new Error(`Invalid Graph: Node missing data:  Node ID: ${node.id}`)
@@ -77,13 +75,23 @@ export function validateGraph(graph){
             throw new Error("Invalid Graph: Invalid Edge");
         }
 
+        if(typeof edge.id !== "string" || edge.id ===""){
+            throw new Error("Edge Id must be a non-empty string");
+        } 
+
+        if(typeof edge.source !== "string" || typeof edge.target !== "string"){
+            throw new Error("Edges source/targets must be a string");
+        }
+
         if(!nodeIds.has(edge.source) || !nodeIds.has(edge.target)){
             throw new Error(`Invalid Graph: Edge source/target relates to unknown node: Edge ID: ${edge.id}`)
         }
-      
-        if(edgeSymbolValidation(edge.label) === null){
-            throw new Error(`Invalid Graph: Invalid Edge Transition: Edge ID: ${edge.id}, Edge Label: ${edge.label}`);
+    
+        if(typeof edge.label !== "string"){
+            throw new Error("Edge label must be a valid string");
         }
+
+        edgeSymbolValidation(edge.label);
 
         if(edgeIds.has(edge.id)){
             throw new Error(`Invalid Graph: Duplicated Edge ID: ${edge.id}`)

@@ -1,18 +1,12 @@
 export default function wordValidation(userInput){
- if(userInput == null){
-    return null;
+ if(userInput === null){
+    throw new Error("Word input cannot be null");
+}
+
+if(!(/^[a-zA-Z0-9]*$/.test(userInput))){
+    throw new Error("Invalid Word Entry: Must be 0-9, A-Z, a-z");
  }
 
- let word = userInput.trim();
-
- if(word === ""){
-    return null;
- }
-
- if(!(/^[a-zA-Z0-9]+$/.test(word))){
-    return null;
- }
-
- return word;
+ return userInput;
 
 }

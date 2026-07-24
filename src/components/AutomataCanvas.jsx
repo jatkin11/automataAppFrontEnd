@@ -82,14 +82,38 @@ function AutomataCanvasGraph(){
     const inputRef = useRef(null);
     const { screenToFlowPosition } = useReactFlow();
  
-    //NEED TO ADD SELF-LOOP VALIDATION
     const onConnect = useCallback((params) => {
-        const userInput = window.prompt("Enter Symbol")
+        try{
 
+        const existingEdge = edges.find( (edge) => edge.source === params.source && edge.target === params.target)
+
+        if(existingEdge){
+            const userInput = window.prompt("Edit Symbol", String(existingEdge.label ?? ""))
+
+            const validatedUserInput = edgeSymbolValidation(userInput);
+
+            if(validatedUserInput === null){
+                return;
+            }
+
+            setEdges((edges) =>
+                edges.map((edge) =>
+                    edge.id === existingEdge.id ?
+            {
+                ...edge,
+                label: validatedUserInput,
+            } : edge
+
+                ));
+            setWordAcceptedOnAutomata(null);
+            return;
+        }
+
+        const userInput = window.prompt("Enter Symbol")
         const validatedUserInput = edgeSymbolValidation(userInput);
 
-        if(validatedUserInput == null){
-            return null;
+        if(validatedUserInput === null){
+            return;
         }
 
         setEdges((edgesSnapshot) => 
@@ -103,8 +127,11 @@ function AutomataCanvasGraph(){
                     fontFamily: "'Courier New', monospace"
                 },
                 markerEnd:{type: MarkerType.ArrowClosed, width:15, height: 15}}, 
-                edgesSnapshot))},
-                [setEdges]);
+                edgesSnapshot))
+                setWordAcceptedOnAutomata(null);
+            }catch(error){
+                    window.alert(error.message);
+            }}, [setEdges,edges]);
     
     const setStartState = useCallback((event,node)=>{
         setNodes((r)=> 
@@ -114,7 +141,9 @@ function AutomataCanvasGraph(){
                     ...e.data,
                     startingState: e.id === node.id,
                 },
-            })))},[setNodes]);
+            })))
+            setWordAcceptedOnAutomata(null);
+        },[setNodes]);
 
 
     const applyBackendGraph = useCallback(
@@ -140,7 +169,7 @@ function AutomataCanvasGraph(){
       setWordAcceptedOnAutomata(null);
       setNodes([...layoutedNodes]);
       setEdges([...edgesWithArrows]);
-    },
+        },
     [setNodes, setEdges],
   );
 
@@ -175,12 +204,9 @@ function AutomataCanvasGraph(){
     },[nodes,edges])
 
     const convertToNFA = useCallback (async () => {
-        if(!regexValidation(regexString)){
-            window.alert("Invalid Regex! Must consist of A-Z, a-z, 0-9, '()', 'ε', '∅', '|', '*'")
-            return;
-        }
         try{
-        const convertedGraph = await apiRegexToNFA(regexString)
+        const validatedRegex = regexValidation(regexString);
+        const convertedGraph = await apiRegexToNFA(validatedRegex)
         applyBackendGraph(convertedGraph);
         } catch (error){
             window.alert(error.message);
@@ -201,7 +227,9 @@ function AutomataCanvasGraph(){
                         ...e.data,
                         acceptingState: !e.data.acceptingState,
                     }}
-            }))},[setNodes])
+            }))
+            setWordAcceptedOnAutomata(null);
+        },[setNodes])
 
     const addNode = useCallback((e)=> {
         e.preventDefault();
@@ -231,13 +259,13 @@ function AutomataCanvasGraph(){
 
     const onEdgeDoubleClick = useCallback((event,edgeToAmend) =>{
         event.preventDefault();
-
+        try{
         const userInput = window.prompt("Edit Symbol", String(edgeToAmend.label ?? ""))
 
         const validatedUserInput = edgeSymbolValidation(userInput);
 
-        if(validatedUserInput == null){
-            return null;
+        if(validatedUserInput === null){
+            return;
         }
 
         setEdges((edges) =>
@@ -246,20 +274,20 @@ function AutomataCanvasGraph(){
         {
             ...edge,
             label: validatedUserInput,
-        } : edge
-
-            )
-        );
-    },[setEdges])
+        } : edge ));
+        setWordAcceptedOnAutomata(null);
+    }catch(error){
+        window.alert(error.message);
+    }},[setEdges])
 
     const testWordOnAutomata = useCallback(async () => {
         setWordAcceptedOnAutomata(null);
-        const word = wordValidation(wordTest);
+        try{
+        const word = wordValidation(wordTest); 
         if(word=== null){
             window.alert("Invalid word! Must consist of A-Z, a-z, 0-9 (no spaces)");
             return;
         }
-        try{        
         const currentGraph = {
             nodes,
             edges,
@@ -275,18 +303,10 @@ function AutomataCanvasGraph(){
 
     const testWordOnRegex = useCallback(async () => {
         setWordAcceptedOnRegex(null);
-        if(!regexValidation(regexString)){
-            window.alert("Invalid Regex! Must consist of A-Z, a-z, 0-9, '()','ε','∅','|', '*'")
-            return;
-        }
-        const word = wordValidation(wordTest);
-            if(word === null){
-            window.alert("Invalid word! Must consist of A-Z, a-z, 0-9 (no spaces)");
-            return;
-        }
         try{
-        const acceptedString = await apiTestWordOnRegex(regexString,word)
-        console.log(acceptedString.accepted);
+        const validatedWord = wordValidation(wordTest);
+        const validatedRegex = regexValidation(regexString);
+        const acceptedString = await apiTestWordOnRegex(validatedRegex,validatedWord)
         setWordAcceptedOnRegex(acceptedString.accepted);
         } catch (error){
             window.alert(error.message);
@@ -303,7 +323,7 @@ function AutomataCanvasGraph(){
         validateGraph(currentGraph);
         const responseGraph = await apiMinimiseDFA(currentGraph);
         applyBackendGraph(responseGraph);
-        console.log(responseGraph)
+        setWordAcceptedOnAutomata(null);
         } catch (error){
             window.alert(error.message);
         }
@@ -311,11 +331,11 @@ function AutomataCanvasGraph(){
 
     const toggleHelpPanel = useCallback(() =>
         setHelpPanelToggle(r => !r)
-   )
+   ,[setHelpPanelToggle])
 
     const closeHelpPanel = useCallback(() =>
         setHelpPanelToggle(false)
-    )
+    ,[setHelpPanelToggle])
 
     const downloadFile = useCallback(({data, filename, fileType}) => {
         const blob = new Blob([data], {type: fileType});
@@ -324,7 +344,7 @@ function AutomataCanvasGraph(){
         a.href = window.URL.createObjectURL(blob);
         a.click()
         a.remove();
-    })  
+    },[])  
 
     const importJson = useCallback(async (event) => {
         const file = event.target.files?.[0];
@@ -336,20 +356,22 @@ function AutomataCanvasGraph(){
         const jsonFile = await file.text();
         const graph = JSON.parse(jsonFile);
         applyBackendGraph(graph);
-        event.target.value = "";}
+}
         catch(error){
             window.alert(error.message);
+        }finally{
+            event.target.value = "";   
         }
 
-    })
+    },[applyBackendGraph])
 
     const downloadJson = useCallback((e)=> {
         e.preventDefault()
+        try{
         const userInput = window.prompt("Enter filename");
         const filename = filenameValidation(userInput);
 
         if(filename === null){
-            window.alert("Invalid filename, must contain only letters, numbers, hyphens and underscores")
             return;
         }
         const currentGraph = {
@@ -361,7 +383,9 @@ function AutomataCanvasGraph(){
             filename: filename,
             fileType: 'application/json',
         })
-    })
+    }catch(error){
+        window.alert(error.message);
+    }},[nodes, edges, downloadFile])
 
     const clearScreen = useCallback(() => {
         setNodes(initialNodes);
@@ -370,7 +394,7 @@ function AutomataCanvasGraph(){
         setWordTest("");
         setWordAcceptedOnAutomata(null);
         setWordAcceptedOnRegex(null);
-    });
+    },[setNodes,setEdges,setRegexString,setWordTest,setWordAcceptedOnAutomata,setWordAcceptedOnRegex]);
 
     return(
         <div className="canvas-graph">
@@ -417,7 +441,7 @@ function AutomataCanvasGraph(){
                     <button onClick={testWordOnRegex} className={wordAcceptedOnRegex=== true ? "word-test accepted" : wordAcceptedOnRegex === false ? "word-test rejected" : "word-test"}
                     >{wordAcceptedOnRegex=== true ? "Accepted!" : wordAcceptedOnRegex === false ? "Rejected!" : "Test Word On Regex"}</button>
                     <button onClick={downloadJson}>Download JSON</button>
-                    <input type="file" ref={inputRef} accept=".json/application/json" onChange={importJson} hidden></input>
+                    <input type="file" ref={inputRef} accept=".json,application/json" onChange={importJson} hidden></input>
                     <button onClick={() => inputRef.current?.click()}>Import JSON</button>
                     <button onClick={clearScreen}>Clear All</button>
                 </div>
