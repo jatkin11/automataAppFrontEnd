@@ -6,7 +6,7 @@ export default function CustomNode({ data,selected }){
         <div className={`custom-node ${selected ? "selected" : ""} ${data.acceptingState ? "accepting":""} ${data.startingState ? "starting":""}`}>
             {data.label}
         <Handle id = "right" type="source" position={Position.Right}/>
-        <Handle id ="left" type="target" position={Position.Left}/>
+        <Handle id ="left" type="source" position={Position.Left}/>
         </div>
     );
 
