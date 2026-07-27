@@ -122,6 +122,8 @@ function AutomataCanvasGraph(){
       const edgesWithArrows = layoutedEdges.map((edge) => ({
         ...edge,
         type: "default",
+        sourceHandle: "right",
+        targetHandle: "left",
         style: {
             strokeWidth: 1.5
                 },
