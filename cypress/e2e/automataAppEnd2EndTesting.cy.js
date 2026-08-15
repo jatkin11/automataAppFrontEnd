@@ -43,10 +43,10 @@ beforeEach( () => { cy.visit("https://automata.help")} );
         cy.get(".react-flow__edge").contains("a").should("exist");
         cy.get(".react-flow__edge").contains("b").should("exist");
         cy.get(".react-flow__edge").contains("c").should("exist");
+        cy.get(".custom-node").contains("q0").should("exist");
         cy.get(".custom-node").contains("q1").should("exist");
         cy.get(".custom-node").contains("q2").should("exist");
         cy.get(".custom-node").contains("q3").should("exist");
-        cy.get(".custom-node").contains("q4").should("exist");
         cy.get(".custom-node").should("have.length",4)
     })
 
