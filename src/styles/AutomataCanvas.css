@@ -5,6 +5,10 @@
     overflow: hidden;
 }
 
+/* Styling taken from:
+(getcssscan.com, n.d.) - https://getcssscan.com/css-box-shadow-examples  (EMBOSS)
+and (Roee Yossef, 2024) - https://savvy.co.il/en/blog/css/playing-with-css-text-shadow-property/ (#19 & #53)
+*/
 .app-title{
     padding: 1px 20px ;
     background: #c8c4bc;
@@ -28,6 +32,10 @@
     gap: 10px;
 }
 
+/* Styling taken from:
+(getcssscan.com, n.d.) - https://getcssscan.com/css-box-shadow-examples  (EMBOSS)
+and (Roee Yossef, 2024) - https://savvy.co.il/en/blog/css/playing-with-css-text-shadow-property/ (#19 & #53)
+*/
 .tool-panel button{
     padding: 10px 15px ;
     background: #3a3a3a;
@@ -42,7 +50,10 @@
 }
 
 
-
+/* Styling taken from:
+(getcssscan.com, n.d.) - https://getcssscan.com/css-box-shadow-examples  (EMBOSS)
+and (Roee Yossef, 2024) - https://savvy.co.il/en/blog/css/playing-with-css-text-shadow-property/ (#19 & #53)
+*/
 .regex-input{
     padding: 10px 15px;
     font-size: 16px;
@@ -56,6 +67,10 @@
 }
 
 
+/* Styling taken from:
+(getcssscan.com, n.d.) - https://getcssscan.com/css-box-shadow-examples  (EMBOSS)
+and (Roee Yossef, 2024) - https://savvy.co.il/en/blog/css/playing-with-css-text-shadow-property/ (#19 & #53)
+*/
 .word-input{
     padding: 10px 15px;
     font-size: 16px;
@@ -103,6 +118,10 @@ input::placeholder{
     gap: 10px;
 }
 
+/* Styling taken from:
+(getcssscan.com, n.d.) - https://getcssscan.com/css-box-shadow-examples  (EMBOSS)
+and (Roee Yossef, 2024) - https://savvy.co.il/en/blog/css/playing-with-css-text-shadow-property/ (#19 & #53)
+*/
 .help-panel button{
     padding: 10px 15px ;
     background: #3a3a3a;
@@ -115,7 +134,10 @@ input::placeholder{
     border-radius: 50%;    
 }
 
-
+/* Styling taken from:
+(getcssscan.com, n.d.) - https://getcssscan.com/css-box-shadow-examples  (EMBOSS)
+and (Roee Yossef, 2024) - https://savvy.co.il/en/blog/css/playing-with-css-text-shadow-property/ (#19 & #53)
+*/
 .help-menu{
     position : relative;
     padding: 1px 20px ;
@@ -126,6 +148,10 @@ input::placeholder{
     border-radius: 30px;
 }
 
+/* Styling taken from:
+(getcssscan.com, n.d.) - https://getcssscan.com/css-box-shadow-examples  (EMBOSS)
+and (Roee Yossef, 2024) - https://savvy.co.il/en/blog/css/playing-with-css-text-shadow-property/ (#19 & #53)
+*/
 .help-menu button{
     position: absolute;
     top: 10px;
