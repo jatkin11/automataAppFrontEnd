@@ -1,3 +1,18 @@
+/**
+ * Validation for Edge Transition Symbols
+ * 
+ * Takes the user-inputted string and checks:
+ * - if user input is null, returns null
+ * - any comma separated values:
+ *      - aren't empty strings
+ *      - are valid characters i.e. A-Z,a-z,0-9,ε
+ *      - only 1 char long
+ * 
+ * @param userInput user-inputted string of comma-separated transition symbols for an edge
+ * @returns comma-separated string of transitions with white-space removed
+ * @throws {Error} if invalid symbol entered
+ */
+
 export default function edgeSymbolValidation(userInput){
     if(userInput === null){
         return null;
