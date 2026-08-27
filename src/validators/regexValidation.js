@@ -3,6 +3,9 @@ const STAR = '*';
 const OPEN_BRACKET = '(';
 const CLOSED_BRACKET = ')';
 
+/**
+ * creating enums for using in validation of previous character
+ */
 const PreviousChar = Object.freeze({
     NONE: "NONE",
     VALID_CHAR: "VALID_CHAR",
@@ -12,6 +15,21 @@ const PreviousChar = Object.freeze({
     STAR: "STAR",
 });
 
+/**
+ * Validator for user-inputted regex
+ * 
+ * - removes all whitespace 
+ * - checks:
+ * - regex isn't blank
+ * - using a stack, checks the brackets are correct 
+ * - correct union position in regex e.g. cant have "||"
+ * - correct star position e.g. cant have "|*"
+ * - all characters are valid
+ * 
+ * @param userInput user-inputted regex string
+ * @returns normalised regex with whitespace removed
+ * @throws {Error} if null or invalid regex
+ */
 export default function regexValidation(userInput){
     if(userInput === null){
         throw new Error("Regex Input cannot be null")
