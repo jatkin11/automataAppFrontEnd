@@ -1,5 +1,36 @@
 import edgeSymbolValidation from "./edgeSymbolValidation";
 
+/**
+ * Validates a graph
+ * 
+ * Checks:
+ * - graph no null
+ * - graph is object type
+ * - graph nodes and edges arrays aren't null
+ * - graph nodes and edges are arrays
+ * - at least one node
+ * - for each node in node array:
+ *      - node is not null
+ *      - node is object type
+ *      - node id is  a string and consists of chars 0-9
+ *      - node id not duplicated
+ *      - node data is not null
+ *      - node data is object type
+ *      - all parts of node correct type
+ *      - only one starting state
+ * - for each node in edges array:
+ *      - edge is not null
+ *      - edge is object type
+ *      - edge sources and targets are strings
+ *      - no edge has a target or source state thats not in the set of node IDs
+ *      - edge label is a string
+ *      - edgeSymbolValidation is done on the label
+ *      - no duplicated edges
+ * 
+ * @param graph graph to validate
+ * @throws {Error} if any validation fails
+ */
+
 export function validateGraph(graph){
     if(!graph || typeof graph !== "object"){
         throw new Error("Invalid Graph: Graph cannot be null");
