@@ -6,7 +6,7 @@ import "../styles/CustomNode.css";
  * 
  * Handles on left and right of node
  * 
- * Adopted template from ReactFlow documentation (React Flow, 2026a) https://reactflow.dev/api-reference/components/handle
+ * Adapted template from react flow documentation (React Flow, 2026c)
  * 
  * @param data node data - acceptingState and startingState determine className to provide different styling for accepting / starting nodes
  * @param selected node selected boolean
