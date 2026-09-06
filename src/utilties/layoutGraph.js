@@ -7,8 +7,9 @@ const nodeHeight = 70;
  * 
  * Automatic graph layout from Dagre library
  * 
- * Adapted from the React Flow Dagre example (React Flow, 2026b) - https://reactflow.dev/examples/layout/dagre
- * using the Dagre Library (dagrejs, 2023) - https://github.com/dagrejs/dagre 
+ * Adapted from the React Flow Dagre example (React Flow, 2026g)
+
+ * using the Dagre Library (Dagre, 2023) 
  * 
  * Creates a graph from passed nodes, edges and direction with new X/Y positions for the nodes
  * 

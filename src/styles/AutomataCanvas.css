@@ -83,6 +83,10 @@ and (Roee Yossef, 2024) - https://savvy.co.il/en/blog/css/playing-with-css-text-
     font-family: 'Courier New', monospace;
 }
 
+/* Styling taken from:
+(getcssscan.com, n.d.) - https://getcssscan.com/css-box-shadow-examples  (EMBOSS)
+and (Roee Yossef, 2024) - https://savvy.co.il/en/blog/css/playing-with-css-text-shadow-property/ (#19 & #53)
+*/
 .word-test{
     padding: 10px 15px ;
     background: white;

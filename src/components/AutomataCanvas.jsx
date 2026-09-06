@@ -59,7 +59,7 @@ const nodeTypes = {
  * - Dagre graph layout
  * - help panel 
  * 
- * @returns the react flow canvas-graph component (React Flow, 2026a)
+ * @returns rendered React Flow canvas component (React Flow, 2026a)
  */
 function AutomataCanvasGraph(){
     
@@ -333,7 +333,13 @@ function AutomataCanvasGraph(){
     );
 
     /**
+     *  When an edge is double clicked prompts the user to edit the transition symbols
+     * - validates the new transitions symbols using edgeSymbolValidation
+     * - returns early if input is null i.e. cancelled
+     * - updates the edge label with the validated transition symbols
      * 
+     * @param event mouse double click event
+     * @param edgeToAmend clicked edge
      */
     const onEdgeDoubleClick = useCallback((event,edgeToAmend) =>{
         event.preventDefault();
@@ -353,13 +359,24 @@ function AutomataCanvasGraph(){
             ...edge,
             label: validatedUserInput,
         } : edge ));
-        setWordAcceptedOnAutomata(null);
+        setWordAcceptedOnAutomata(null); //resets the word-test-on-automata result display, as the graph has been updated 
     }catch(error){
         window.alert(error.message);
     }},[setEdges])
 
+
+
     /**
+     * Tests user-inputted word on the drawn automata
      * 
+     * Process:
+     * - resets automata-word-test display state
+     * - validates the word
+     * - creates a graph from the current nodes and edges states
+     * - validates the graph
+     * - passes the word and graph to the API function and awaits the response
+     * - updates the wordAcceptedOnAutomata state to the boolean result of the response
+     * - catches any errors and displays them to the user as an alert
      */
     const testWordOnAutomata = useCallback(async () => {
         setWordAcceptedOnAutomata(null);
@@ -376,14 +393,22 @@ function AutomataCanvasGraph(){
         validateGraph(currentGraph);
         const acceptedString = await apiTestWordOnAutomata(currentGraph,word)
         console.log(acceptedString.accepted);
-        setWordAcceptedOnAutomata(acceptedString.accepted);
+        setWordAcceptedOnAutomata(acceptedString.accepted); 
         } catch (error){
             window.alert(error.message);
         }
     }, [nodes,edges,wordTest]);
 
     /**
+     * Tests user-inputted word on a user-inputted regex
      * 
+     * Process:
+     * - resets regex-word-test display state
+     * - validates the word
+     * - validates the regex
+     * - passes the word and regex to the API function and awaits the response
+     * - updates the wordAcceptedOnRegex state to the boolean result of the response
+     * - catches any errors and displays them to the user as an alert
      */
     const testWordOnRegex = useCallback(async () => {
         setWordAcceptedOnRegex(null);
@@ -391,7 +416,7 @@ function AutomataCanvasGraph(){
         const validatedWord = wordValidation(wordTest);
         const validatedRegex = regexValidation(regexString);
         const acceptedString = await apiTestWordOnRegex(validatedRegex,validatedWord)
-        setWordAcceptedOnRegex(acceptedString.accepted);
+        setWordAcceptedOnRegex(acceptedString.accepted); 
         } catch (error){
             window.alert(error.message);
         }
@@ -399,6 +424,15 @@ function AutomataCanvasGraph(){
 
 
     /**
+     * Turns the current graph into a minimised DFA
+     * 
+     * Process:
+     * - creates graph from current nodes/edges states
+     * - validates graph
+     * - passes graph to API function and awaits response
+     * - applies the returned graph response
+     * - resets wordAcceptedOnAutoamta
+     * - catches any errors and displays them to the user as an alert
      * 
      */
     const minimiseDFA = useCallback (async () => {
@@ -416,19 +450,42 @@ function AutomataCanvasGraph(){
         }
     },[nodes,edges,applyBackendGraph]);
 
+
     /**
+     * Toggles the Help Panel
      * 
+     * - toggles helpPanelToggle state 
      */
     const toggleHelpPanel = useCallback(() =>
         setHelpPanelToggle(r => !r)
    ,[setHelpPanelToggle])
 
+
+   /**
+    * Closes the help panel
+    * 
+    * - changes helpPanelToggle state to false
+    */
     const closeHelpPanel = useCallback(() =>
         setHelpPanelToggle(false)
     ,[setHelpPanelToggle])
 
+
     /**
+     * Downloads a file of the passed data, filename and filetype
      * 
+     * Adapted from the MDN web docs on Blobs (MDN Web Docs, 2019)
+     * 
+     * Process:
+     * - creates blob of data and file type
+     * - creates an element in the DOM
+     * - sets the download filename
+     * - creatse a link for the blob and sets it to the created element
+     * - clicks the link to download (file downloads in browser)
+     * - removes the created element
+     * @param data data to be passed in
+     * @param filename filename
+     * @param fileType MIME filetype
      */
     const downloadFile = useCallback(({data, filename, fileType}) => {
         const blob = new Blob([data], {type: fileType});
@@ -440,7 +497,18 @@ function AutomataCanvasGraph(){
     },[])  
 
     /**
+     * Imports a JSON file and displays the parsed graph
      * 
+     * Adapted from the MDN File API docs (MDN Web Docs, 2023)
+     * 
+     * Process:
+     * - gets the first file from the file input
+     * - returns early if no file
+     * - gets the file text
+     * - uses Javascripts JSON.parse to parse the text into a graph
+     * - applies the graph
+     * - catches any errors and displays to the user an an alert
+     * - finally resets the file input 
      */
     const importJson = useCallback(async (event) => {
         const file = event.target.files?.[0];
@@ -462,7 +530,16 @@ function AutomataCanvasGraph(){
     },[applyBackendGraph])
 
     /**
+     * Downloads a JSON of the curernt graph
      * 
+     * Process:
+     * - prompts the user for a filename
+     * - validates/normalises the filename using filenameValidation
+     * - returns early if filename is null i.e. user cancelled prompt
+     * - creates graph from current nodes/edges states
+     * - passes the JSON of the current graph, serialised by the javascript JSON function, 
+     * the normalised filename, and MIME filetype (JSON) into the downloadFile function
+     * - catches an error and displays to the user as an alert
      */
     const downloadJson = useCallback((e)=> {
         e.preventDefault()
@@ -487,7 +564,7 @@ function AutomataCanvasGraph(){
     }},[nodes, edges, downloadFile])
 
     /**
-     * 
+     * Clears the screen and resets all the states
      */
     const clearScreen = useCallback(() => {
         setNodes(initialNodes);
@@ -556,7 +633,7 @@ function AutomataCanvasGraph(){
 
             </Panel>
 
-
+            
             {helpPanelToggle && (
             <Panel position="top-center">
                 <div className="help-menu">
@@ -580,8 +657,9 @@ function AutomataCanvasGraph(){
 }
 
 /**
- * 
- * @returns 
+ * Puts the AutomataCanvasGraph in a ReactFlowProvider (React Flow, 2026f)
+ *  
+ * @returns AutomataCanvasGraph in a ReactFlowProvider
  */
 export default function AutomataCanvas(){
     return(
